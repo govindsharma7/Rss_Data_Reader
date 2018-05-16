@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+	{% include 'top-bar.html' %}
+
+	<title>RSS Data Reader</title>
+</head>
+<style type="text/css">
+	.cont-rss {
+		display: flex;
+	    justify-content: center;
+	    padding: 1%;
+	}
+	.rss_url_div {
+		width: 100%;
+		padding: 1%;
+		box-shadow: 1px 1px 1px 1px #888888;
+	}
+	.post_div {
+		width: 100%;
+		padding: 1%;
+		box-shadow: 1px 1px 1px 1px #888888;
+    	margin-top: 1%;
+	}
+	.post_div small {
+		font-size: 10px;
+		float: right;
+	}
+	#new_post {
+		min-height: 680px;
+	}
+</style>
+<body class="container">
+	{% include 'nav.html' %}
+
+	<div class="cont-rss">
+		<div class="rss_url_div">
+			<div class="form-group">
+			    <label for="rss_url">Enter RSS URL</label>
+			    <input type="text" class="form-control" id="rss_url">
+			  </div>
+			  <button type="submit" id="submit" class="btn btn-primary" style="float: right;">Submit</button>
+		</div>
+	</div>
+	<div class="clearfix"></div>
+	<div id="new_post"></div>
+	<div class="clearfix"></div>
+	{% include 'footer.html' %}
+
+
+
+<script type="text/javascript">
+
+	$('#submit').click(function() {
+		rss_submit();
+	});
+
+	function rss_submit() {
+		var url = $("#rss_url").val();
+
+		if (url == "")
+		{
+			alert("Please Input RSS URL");
+			return false;
+		}
+		else
+		{
+			var objectDataString = JSON.stringify({ "rss_url" : url});
+
+			jQuery.ajax({
+		      url: "/api/v1/rss/getdata",
+		      type: "POST",
+		      contentType: 'application/json; charset=UTF-8',
+		      data: objectDataString,
+		      success: function(data)
+		      {
+		      	if (data['status'] == 200) {
+	      			$("#new_post").html(data['rss_data']);
+		      	} else {
+		      		alert(data['message']);
+		      	}
+		      }
+		    });
+		}
+
+	}
+
+</script>
+
+</body>
+</html>
